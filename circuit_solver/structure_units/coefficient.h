@@ -12,12 +12,18 @@
 class Coefficient
 {
 public:
-	double operator ()() const;															// перегруженный оператор скобок для более удобной работы
-	Coefficient& operator=(const double* valuePointer);									// метод изменения хранимого указателя на значение
+	Coefficient(const double* valuePointer, int valueSign = 1, double term = 0);        // конструктор с параметрами (по умолчанию знак положительный)
+	double operator ()() const;															// перегруженный оператор скобок для вычисления значения
+	Coefficient& operator= (const double* valuePointer);								// метод изменения хранимого указателя на значение
 	void setSign(int valueSign = 1);													// метод изменения хранимого знака
-	Coefficient(const double* valuePointer, int valueSign = 1);							// конструктор с параметрами (по умолчанию знак положительный)
-	
+    void setTerm(double term = 0);                                                      // метод изменения дополнительного слагаемого
+	Coefficient operator+= (double term);                                               // перегруженные операторы для работы с дополнительным слагаемым
+    Coefficient operator-= (double term);                                               //
+    Coefficient operator+ (double term);                                                //
+    Coefficient operator- (double term);                                                //
+
 private:
 	const double* mPointer = nullptr;													// указатель на значение
+    double mTerm = 0;                                                                   // дополнительное слагаемое
 	int mSign = 1;																		// знак (+-1)
 };
