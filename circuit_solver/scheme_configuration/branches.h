@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../type_definitions.h"
+#include "elements.h"
 #include "pin_matrix.h"
 #include "nodes.h"
 
@@ -8,7 +9,7 @@
 class Branches
 {
 public:
-	void update(const PinMatrix& matrix, const Nodes& nodes, const elem_vect_t& elements);	// метод обновления всех структур
+	void update(const PinMatrix& matrix, const Nodes& nodes, const Elements& elements);     // метод обновления всех структур
 	const size_matr_t& get() const;															// геттер для списка ветвей mBranches
 	const size_vect_t& operator[] (size_t index) const;										// геттер строки списка ветвей mBranches (одномерного вектора)
 	const bool_matr_t& getBranchesOnPins() const;											// геттер матрицы mBranchesOnPins
@@ -23,5 +24,5 @@ private:
 
 	void sortBranches(bool_vect_t branchesWithCurrentSource);								// метод сортировки ветвей в списке mBranches по наличию источника тока
 	void updateBranchesOnPins(const size_t pinCount);										// метод обновления матрицы mBranchesOnPins
-	bool_vect_t findBranchesWithCurrentSource(const elem_vect_t& elements) const;			// метод построения вектора индикации наличия в i-ой ветви источника тока 
+	bool_vect_t findBranchesWithCurrentSource(const Elements& elements) const;		    	// метод построения вектора индикации наличия в i-ой ветви источника тока 
 };

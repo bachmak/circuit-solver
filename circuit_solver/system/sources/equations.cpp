@@ -1,17 +1,15 @@
 #include "../equations.h"
 
-void Equations::update(const IncMatrix& matrix, const Loops& loops, const Branches& branches, const elem_vect_t& elements)
+void Equations::update(const IncMatrix& matrix, const Loops& loops, const Branches& branches, const Elements& elements)
 {
 	mUnknownCurrentCount = matrix.getUnknownCurrentCount();
 
 	mLeftPart = coeff_matr_t(mUnknownCurrentCount,											// создаем двумерную матрицу нулевых коэффициентов
 		coeff_vect_t(mUnknownCurrentCount, Coefficient(ZERO_PTR)));							// размером unknownCurrentNumber х unknownCurrentNumber
 
-	mCurrentSourceCount = std::count_if(elements.begin(), elements.end(),
-		[](const Element& e) { return (e.getType() == Type::J); });							// считаем источники тока 
+	mCurrentSourceCount = elements.getCurrentSourceCount();     							// получаем количество источников тока 
 
-	mVoltageSourceCount = std::count_if(elements.begin(), elements.end(),
-		[](const Element& e) { return (e.getType() == Type::E); });							// считаем источники напряжения 
+	mVoltageSourceCount = elements.getVoltageSourceCount();     							// получаем количество источников напряжения 
 
 	mKnownSourceCount = mCurrentSourceCount + mVoltageSourceCount;							// считаем все источники
 
@@ -23,6 +21,12 @@ void Equations::update(const IncMatrix& matrix, const Loops& loops, const Branch
 
 	update1stLawEquations(matrix, elements);
 	update2ndLawEquations(loops, branches, elements);
+
+    for (size_t i = 0; i < mLeftPart.size(); i++)
+    {
+        mLeftPart[i][i] += 1;
+    }
+    
 }
 
 const coeff_matr_t& Equations::left() const
@@ -85,7 +89,7 @@ std::string Equations::toString(size_t precision) const
 	return stream.str();
 }
 
-void Equations::update1stLawEquations(const IncMatrix& matrix, const elem_vect_t& elements)
+void Equations::update1stLawEquations(const IncMatrix& matrix, const Elements& elements)
 {
 	for (size_t i = 0; i < matrix[0].size() - 1; i++)									// перебираем столбцы матрицы инцидентности. сколько столбцов - столько узлов -
 	{																					// столько уравнений (за исключением одного линейно зависимого столбца)
@@ -131,7 +135,7 @@ void Equations::update1stLawEquations(const IncMatrix& matrix, const elem_vect_t
 	}
 }
 
-void Equations::update2ndLawEquations(const Loops& loops, const Branches& branches, const elem_vect_t& elements)
+void Equations::update2ndLawEquations(const Loops& loops, const Branches& branches, const Elements& elements)
 {
 	for (size_t i = 0; i < loops.size(); i++)											// перебор по контурам схемы
 	{
@@ -174,7 +178,7 @@ void Equations::update2ndLawEquations(const Loops& loops, const Branches& branch
 	}
 }
 
-size_t Equations::getVoltageSourceIndex(const size_t elemIndex, const elem_vect_t& elements) const
+size_t Equations::getVoltageSourceIndex(const size_t elemIndex, const Elements& elements) const
 {
 	size_t counter = 0;																	// переменная для подсчета источников напряжения
 
@@ -188,7 +192,7 @@ size_t Equations::getVoltageSourceIndex(const size_t elemIndex, const elem_vect_
 	return counter;																		// возвращаем значение счетчика
 }
 
-size_t Equations::getCurrentSourceElemIndex(const size_t currentSourceIndex, const elem_vect_t& elements) const
+size_t Equations::getCurrentSourceElemIndex(const size_t currentSourceIndex, const Elements& elements) const
 {
 	size_t counter = 0;																	// переменная для подсчета источников тока
 

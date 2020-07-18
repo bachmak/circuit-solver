@@ -11,6 +11,9 @@ void Elements::add(const Element& element)
 		break;
 	case Type::E:
 		mVoltageSourceCount++;
+        break;
+    case Type::R:
+        mResistanceCount++;
 	}
 }
 
@@ -19,7 +22,29 @@ const Element& Elements::operator[](size_t index) const
 	return mElements[index];
 }
 
-const size_t Elements::size() const
+Element& Elements::operator[](size_t index)
+{
+    return const_cast<Element&>(
+        static_cast<const Elements&>(*this)[index]
+    );
+}
+
+size_t Elements::size() const
 {
 	return mElements.size();
+}
+
+size_t Elements::getCurrentSourceCount() const
+{
+    return mCurrentSourceCount;
+}
+
+size_t Elements::getVoltageSourceCount() const
+{
+    return mVoltageSourceCount;
+}
+
+size_t Elements::getResistanceCount() const
+{
+    return mResistanceCount;
 }

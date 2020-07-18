@@ -6,7 +6,7 @@
 // 1) матрицу соединений пинов, по которой осуществляется поиск последовательностей пинов
 // 2) объект nodes для информации об узлах схемы
 // 4) вектор элементов схемы для определения принадлежности пина источнику тока 
-void Branches::update(const PinMatrix& matrix, const Nodes& nodes, const elem_vect_t& elements)
+void Branches::update(const PinMatrix& matrix, const Nodes& nodes, const Elements& elements)
 {
 	mBranches.clear();																	// очищаем текущий вектор ветвей
 	bool_vect_t pinsInBranches(matrix.size(), false);									// нулевой вектор для индикации выводов, участвующих в формировании ветвей
@@ -142,7 +142,7 @@ void Branches::updateBranchesOnPins(const size_t pinCount)
 // метод создания вектора отметок о ветвях, содержащих источники тока, такого, что:
 // если branchesWithCurrentSource[i] равно единице, i-ая ветвь содержит источник тока
 // принимает на вход: вектор элементов схемы для определения типа элемента;
-bool_vect_t Branches::findBranchesWithCurrentSource(const elem_vect_t& elements) const
+bool_vect_t Branches::findBranchesWithCurrentSource(const Elements& elements) const
 {
 	bool_vect_t branchesWithCurrentSource(mBranches.size(), false);						// создаем вектор размером branches.size() и заполняем его false
 	size_t foundCurrentSourceCount = 0;													// переменная, хранящая в себе количество найденных источников тока 

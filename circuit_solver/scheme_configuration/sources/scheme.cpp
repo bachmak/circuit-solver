@@ -3,7 +3,7 @@
 // метод добавления нового элемента в схему (перегрузка)
 void Scheme::add(const Element& element)
 {
-	mElements.push_back(element);															// добавляем элемент в вектор элементов
+	mElements.add(element);			        												// добавляем элемент в список элементов
 
 	switch (element.getType())																// в зависимости от типа элемента
 	{

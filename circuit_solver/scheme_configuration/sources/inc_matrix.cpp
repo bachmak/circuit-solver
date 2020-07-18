@@ -7,7 +7,7 @@
 // 1) объект nodes для информации об узлах схемы
 // 2) объект branches для информации о ветвях схемы
 // 2) матрицу-отношение между множествами узлов и пинов
-void IncMatrix::update(const Nodes& nodes, const Branches& branches, const elem_vect_t& elements)
+void IncMatrix::update(const Nodes& nodes, const Branches& branches, const Elements& elements)
 {
 	mMatrix = int_matr_t(branches.size(), int_vect_t(nodes.size(), 0));					// создаем нулевую матрицу размера branchesSize x nodesSize, заполненную нулями
 
@@ -79,7 +79,7 @@ size_t IncMatrix::getUnknownCurrentCount() const
 	return mUnknownCurrentCount;
 }
 
-void IncMatrix::orient(const Nodes& nodes, const Branches& branches, const elem_vect_t& elements)
+void IncMatrix::orient(const Nodes& nodes, const Branches& branches, const Elements& elements)
 {
 	mUnknownCurrentCount = branches.size() - branches.getCurrentSourceCount();		// сохраняем количество неизвестных токов
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../type_definitions.h"
+#include "elements.h"
 #include "pin_matrix.h"
 #include "nodes.h"
 #include "branches.h"
@@ -12,7 +13,7 @@
 class Scheme
 {
 private:																				// префикс m указывает на то, что переменная является членом класса
-	std::vector<Element> mElements;														// вектор элементов
+    Elements mElements;                                                                 // объект для списка элементов
 	PinMatrix mPinMatrix;																// объект для матрицы соединений пинов
 	Nodes mNodes;																		// объект для узлов и вспомогательных структур
 	Branches mBranches;																	// объект для ветвей и вспомогательных структур

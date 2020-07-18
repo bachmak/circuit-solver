@@ -1,6 +1,6 @@
 #include "../pin_matrix.h"
 
-void PinMatrix::update(const elem_vect_t& elements)
+void PinMatrix::update(const Elements& elements)
 {
 	size_t pinCount = elements.size() * 2;												// считаем пины по количеству элементов
 
