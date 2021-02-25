@@ -1,12 +1,9 @@
 #pragma once
 
 #include <vector>
-#include <algorithm>
-#include <cmath>
 #include <string>
 #include <iomanip>
 #include <sstream>
-#include <map>
 
 #include "structure_units/coefficient.h"
 #include "structure_units/element.h"
@@ -25,11 +22,7 @@ using SizeVect = std::vector<size_t>;
 using BoolVect = std::vector<bool>;
 using ElemVect = std::vector<Element>;
 
-// константы для типов элементов схемы
-const int RESISTANCE_TYPE = 0;
-const int VOLTAGE_SOURCE_TYPE = 1;
-const int CURRENT_SOURCE_TYPE = 2;
-
+// константы для коэффициентов системы уравнений
 static const double ZERO = 0.0;
 static const double ONE = 1.0;
 

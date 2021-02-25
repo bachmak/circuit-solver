@@ -1,5 +1,7 @@
 #pragma once
 
+#include <map>
+
 #include "circuit-solver/common.h"
 #include "circuit-solver/circuit_configuration/elements.h"
 #include "circuit-solver/circuit_configuration/pin_matrix.h"
@@ -8,6 +10,7 @@
 namespace CS
 {
 // класс для представления ветвей схемы
+//////////////////////////////////////////////////////////////////////////////////////////
 class Branches
 {
 public:
@@ -29,6 +32,8 @@ private:
     void updateBranchesOnPins(const size_t pinCount);                                   // метод обновления матрицы mBranchesOnPins
     BoolVect findBranchesWithCurrentSource(const Elements& elements) const;             // метод построения вектора индикации наличия в i-ой ветви источника тока 
 };
+//////////////////////////////////////////////////////////////////////////////////////////
+
 
 // метод обновления вектора ветвей
 // каждая ветвь представляется вектором номеров пинов, входящих в нее
@@ -56,7 +61,7 @@ inline void Branches::update(const PinMatrix& matrix, const Nodes& nodes,
                     branches.back().push_back(pinForBranch);                            // добавляем в ветвь пин pinForBranch
                     pinsInBranches[pinForBranch] = true;                                // делаем отметку о том, что пин pinForBranch вошел в ветвь
 
-                    pinForBranch += ((pinForBranch + 1) % 2) - (pinForBranch % 2)       // переинициализируем пин pinForBranch соседним по элементу пином: четный номер
+                    pinForBranch += ((pinForBranch + 1) % 2) - (pinForBranch % 2);      // переинициализируем пин pinForBranch соседним по элементу пином: четный номер
                                                                                         // инкрементируем, нечетный - декрементриуем. т.к. элементы расположены по порядку
                     branches.back().push_back(pinForBranch);                            // добавляем в ветвь пин pinForBranch
                     pinsInBranches[pinForBranch] = true;                                // делаем отметку о том, что пин pinForBranch вошел в ветвь    
@@ -83,31 +88,37 @@ inline void Branches::update(const PinMatrix& matrix, const Nodes& nodes,
     updateBranchesOnPins(matrix.size());                                                // обновляем матрицу-отношение mNodesOnPins
 }
 
+// геттер для списка ветвей branches
 inline const SizeMatr& Branches::get() const
 {
     return branches;
 }
 
+// геттер строки списка ветвей branches (одномерного вектора)
 inline const SizeVect& Branches::operator[](size_t index) const
 {
     return branches[index];
 }
 
+// геттер матрицы branchesOnPins
 inline const BoolMatr& Branches::getBranchesOnPins() const
 {
     return branchesOnPins;
 }
 
+// геттер размера списка ветвей branches
 inline size_t Branches::size() const
 {
     return branches.size();
 }
 
+// геттер счетчика источников тока
 inline size_t Branches::getCurrentSourceCount() const
 {
     return currentSourceCount;
 }
 
+// метод получения строкового представления списка ветвей branches
 inline std::string Branches::toString() const
 {
     using namespace std;
@@ -131,7 +142,7 @@ inline std::string Branches::toString() const
     return stream.str();
 }
 
-// метод для сортировки (пузырьком) ветвей в векторе mBranches по наличию источника тока
+// метод для сортировки ветвей в векторе branches по наличию источника тока
 // ветви с источником тока - в конец вектора (так с ними потом удобнее работать)
 // принимает на вход: булевый вектор наличия источника тока в i-ой ветви
 inline void Branches::sortBranches(BoolVect branchesWithCurrentSource)
@@ -154,7 +165,7 @@ inline void Branches::sortBranches(BoolVect branchesWithCurrentSource)
 }
 
 // обновления матрицы-отношения между множествами ветвей и пинов такой, что:
-// если mBranchesOnPins[i][j] равно единице, i-ая ветвь содержит j-ый пин 
+// если branchesOnPins[i][j] равно единице, i-ая ветвь содержит j-ый пин 
 // принимает на вход: счетчик пинов схемы
 inline void Branches::updateBranchesOnPins(const size_t pinCount)
 {
