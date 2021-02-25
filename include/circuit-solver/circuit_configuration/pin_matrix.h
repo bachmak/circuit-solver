@@ -13,7 +13,7 @@ public:
     void update(const Elements& elements);                                              // метод обновления матрицы
     const size_t size() const;                                                          // геттер размера матрицы
     const BoolVect& operator[] (size_t index) const;                                    // геттер строки матрицы (одномерного вектора)
-    std::string toString() const;                                                       // метод получения строкового представления матрицы
+    friend std::ostream& operator<<(std::ostream& os, const PinMatrix& matrix);         // перегрузка оператора вывода в поток
 
 private:
     BoolMatr matrix;                                                                    // логическая двумерная матрица для хранения информации о соединениях пинов
@@ -80,37 +80,31 @@ inline const BoolVect& PinMatrix::operator[](size_t index) const
     return matrix[index];
 }
 
-// метод получения строкового представления матрицы
-inline std::string PinMatrix::toString() const
+// перегрузка оператора вывода в поток
+inline std::ostream& operator<<(std::ostream& os, const PinMatrix& matrix)
 {
-    using namespace std;
-
-    stringstream stream;
-
-    stream << "Матрица соединений пинов:\n\n";
-
-    stream << setw(6) << ' ';
+    os << "Матрица соединений пинов:\n\n" << std::setw(6) << ' ';
 
     for (size_t i = 0; i < matrix.size(); i++)
     {
-        stream << setw(4) << i << ' ';
+        os << std::setw(4) << i << ' ';
     }
 
-    stream << "\n\n";
+    os << "\n\n";
 
     for (size_t i = 0; i < matrix.size(); i++)
     {
-        stream << left << setw(4) << i << right << ": ";
+        os << std::left << std::setw(4) << i << std::right << ": ";
 
         for (size_t j = 0; j < matrix[i].size(); j++)
         {
-            stream << setw(4) << matrix[i][j] << ' ';
+            os << std::setw(4) << matrix[i][j] << ' ';
         }
 
-        stream << "\n\n";
+        os << "\n\n";
     }
 
-    return stream.str();
+    return os;
 }
 
 } // namespace CS

@@ -87,9 +87,9 @@ int main()
     ofstream ofs_middle("middle_circuit.txt");
     ofstream ofs_complex("complex_circuit.txt");
 
-    ofs_simple << simple_circuit.toString();
-    ofs_middle << middle_circuit.toString();
-    ofs_complex << complex_circuit.toString();
+    ofs_simple << simple_circuit;
+    ofs_middle << middle_circuit;
+    ofs_complex << complex_circuit;
 
     return 0;
 }

@@ -15,7 +15,7 @@ public:
     const IntVect& getNodesForPin() const;                                              // геттер вектора nodesForPin
     const BoolMatr& getNodesOnPins() const;                                             // геттер матрицы nodesOnPins
     size_t size() const;                                                                // геттер размера списка узлов nodes
-    std::string toString() const;                                                       // метод получения строкового представления списка узлов nodes
+    friend std::ostream& operator<<(std::ostream& os, const Nodes& nodes);              // перегрузка оператора вывода в поток
 
 private:
     SizeMatr nodes;                                                                     // вектор векторов номеров пинов, представляющий список узлов схемы
@@ -101,28 +101,24 @@ inline size_t Nodes::size() const
     return nodes.size();
 }
 
-// метод получения строкового представления списка узлов nodes
-inline std::string Nodes::toString() const
+// перегрузка оператора вывода в поток
+inline std::ostream& operator<<(std::ostream& os, const Nodes& nodes)
 {
-    using namespace std;
-
-    stringstream stream;
-
-    stream << "Узлы:\n\n";
+    os << "Узлы:\n\n";
 
     for (size_t i = 0; i < nodes.size(); i++)
     {
-        stream << left << setw(4) << i << right << ": ";
+        os << std::left << std::setw(4) << i << std::right << ": ";
 
         for (size_t j = 0; j < nodes[i].size(); j++)
         {
-            stream << setw(4) << nodes[i][j] << ' ';
+            os << std::setw(4) << nodes[i][j] << ' ';
         }
 
-        stream << "\n\n";
+        os << "\n\n";
     }
 
-    return stream.str();
+    return os;
 }
 
 // обновления матрицы-отношения между множествами узлов и пинов такой, что:

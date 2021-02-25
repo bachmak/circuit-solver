@@ -18,7 +18,7 @@ public:
                 const Branches& branches, const Elements& elements);                    // метод обновления уравнений
     const CoeffMatr& left() const;                                                      // константный геттер левой части системы уравнений
     const CoeffMatr& right() const;                                                     // константный геттер правой части системы уравнений
-    std::string toString(size_t precision) const;                                       // метод получения строкового представления системы уравнений
+    friend std::ostream& operator<<(std::ostream& os, const Equations& equations);      // перегрузка оператора вывода в поток
 
 private:
     CoeffMatr leftPart;                                                                 // матрица коэффициентов левой части системы
@@ -86,55 +86,54 @@ inline const CoeffMatr& Equations::right() const
     return rightPart;
 }
 
-// метод получения строкового представления системы уравнений
-inline std::string Equations::toString(size_t precision) const
+// перегрузка оператора вывода в поток
+inline std::ostream& operator<<(std::ostream& os, const Equations& equations)
 {
+    auto precision = os.precision();
     using namespace std;
 
-    stringstream stream;
+    os << "Система уравнений:\n\n" << setw(9) << ' ';
 
-    stream << "Система уравнений:\n\n" << setw(9) << ' ';
+    os << left << fixed << setprecision(precision);
 
-    stream << std::left << fixed << setprecision(precision);
-
-    for (size_t i = 0; i < unknownCurrentCount; i++)
+    for (size_t i = 0; i < equations.unknownCurrentCount; i++)
     {
-        stream << "I" << setw(precision + 9) << i << ' ';
+        os << "I" << setw(precision + 9) << i << ' ';
     }
-    stream << setw(precision + 10) << ' ';
+    os << setw(precision + 10) << ' ';
 
-    for (size_t i = 0; i < currentSourceCount; i++)
+    for (size_t i = 0; i < equations.currentSourceCount; i++)
     {
-        stream << "J" << setw(precision + 9) << i << ' ';
+        os << "J" << setw(precision + 9) << i << ' ';
     }
 
-    for (size_t i = 0; i < voltageSourceCount; i++)
+    for (size_t i = 0; i < equations.voltageSourceCount; i++)
     {
-        stream << "E" << setw(precision + 9) << i << ' ';
+        os << "E" << setw(precision + 9) << i << ' ';
     }
 
-    stream << "\n\n";
+    os << "\n\n";
 
-    for (size_t i = 0; i < unknownCurrentCount; i++)
+    for (size_t i = 0; i < equations.unknownCurrentCount; i++)
     {
-        stream << setw(4) << i << ":    ";
+        os << setw(4) << i << ":    ";
 
-        for (size_t j = 0; j < unknownCurrentCount; j++)
+        for (size_t j = 0; j < equations.unknownCurrentCount; j++)
         {
-            stream << setw(precision + 10) << leftPart[i][j]() << ' ';
+            os << setw(precision + 10) << equations.leftPart[i][j]() << ' ';
         }
 
-        stream << setw(precision + 10) << ' ';
+        os << setw(precision + 10) << ' ';
 
-        for (size_t j = 0; j < knownSourceCount; j++)
+        for (size_t j = 0; j < equations.knownSourceCount; j++)
         {
-            stream << setw(precision + 10) << leftPart[i][j]() << ' ';
+            os << setw(precision + 10) << equations.leftPart[i][j]() << ' ';
         }
 
-        stream << "\n\n";
+        os << "\n\n";
     }
 
-    return stream.str();
+    return os;
 }
 
 // метод обновления уравнений, составленных по I закону Кирхгофа

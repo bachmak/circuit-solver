@@ -14,7 +14,7 @@ public:
     void update(const IncMatrix& matrix);                                               // метод обновления списка контуров
     size_t size() const;                                                                // геттер размера списка контуров (количества контуров)
     const IntVect& operator[] (size_t index) const;                                     // константный геттер контура (последовательности номеров ветвей)
-    std::string toString() const;                                                       // метод получения строкового представления списка контуров
+    friend std::ostream& operator<<(std::ostream& os, const Loops& loops);              // перегрузка оператора вывода в поток
 
 private:
     IntMatr loops;                                                                      // список контуров (каждый контур - последовательность номеров ветвей) 
@@ -82,28 +82,24 @@ inline const IntVect& Loops::operator[](size_t index) const
     return loops[index];
 }
 
-// метод получения строкового представления списка контуров
-inline std::string Loops::toString() const
+// перегрузка оператора вывода в поток
+inline std::ostream& operator<<(std::ostream& os, const Loops& loops)
 {
-    using namespace std;
-
-    stringstream stream;
-
-    stream << "Контуры:\n\n";
+    os << "Контуры:\n\n";
 
     for (size_t i = 0; i < loops.size(); i++)
     {
-        stream << left << setw(4) << i << right << ": ";
+        os << std::left << std::setw(4) << i << std::right << ": ";
 
         for (size_t j = 0; j < loops[i].size(); j++)
         {
-            stream << setw(4) << abs(loops[i][j]) - 1 << ' ';
+            os << std::setw(4) << abs(loops[i][j]) - 1 << ' ';
         }
-
-        stream << "\n\n";
+        
+        os << "\n\n";
     }
 
-    return stream.str();
+    return os;
 }
 
 } // namespace CS

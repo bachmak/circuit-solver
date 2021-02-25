@@ -17,7 +17,7 @@ public:
     size_t size() const;                                                                // геттер размера матрицы
     size_t getUnknownCurrentCount() const;                                              // геттер счетчика неизвестных токов
     const IntVect& operator[] (size_t index) const;                                     // геттер строки матрицы (одномерного вектора)
-    std::string toString() const;                                                       // метод получения строкового представления матрицы
+    friend std::ostream& operator<<(std::ostream& os, const IncMatrix& matrix);         // перегрузка оператора вывода в поток
 
 private:
     IntMatr matrix;                                                                     // двумерная матрица для хранения информации об инцидентности ветвей узлам
@@ -71,40 +71,36 @@ const IntVect& IncMatrix::operator[](size_t index) const
     return matrix[index];
 }
 
-// метод получения строкового представления матрицы
-inline std::string IncMatrix::toString() const
+// перегрузка оператора вывода в поток
+inline std::ostream& operator<<(std::ostream& os, const IncMatrix& matrix)
 {
-    using namespace std;
+    os << "Матрица инцидентности:\n\n";
 
-    stringstream stream;
-
-    stream << "Матрица инцидентности:\n\n";
-
-    if (!matrix.empty())
+    if (matrix.size())
     {
-        stream << setw(6) << ' ';
+        os << std::setw(6) << ' ';
 
         for (size_t i = 0; i < matrix[0].size(); i++)
         {
-            stream << setw(4) << i << ' ';
+            os << std::setw(4) << i << ' ';
         }
 
-        stream << "\n\n";
+        os << "\n\n";
 
         for (size_t i = 0; i < matrix.size(); i++)
         {
-            stream << left << setw(4) << i << right << ": ";
+            os << std::left << std::setw(4) << i << std::right << ": ";
 
             for (size_t j = 0; j < matrix[i].size(); j++)
             {
-                stream << setw(4) << matrix[i][j] << ' ';
+                os << std::setw(4) << matrix[i][j] << ' ';
             }
 
-            stream << "\n\n";
+            os << "\n\n";
         }
     }
 
-    return stream.str();
+    return os;
 }
 
 // геттер счетчика неизвестных токов

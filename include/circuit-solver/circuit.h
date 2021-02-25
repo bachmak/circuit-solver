@@ -30,7 +30,7 @@ public:
     void add(const Element& element);                                                   // метод добавления в схему нового элемента
     void update();                                                                      // метод обновления схемы
     void setElementValue(size_t index, double value);                                   // метод изменения значения элемента
-    std::string toString(size_t precision = 3) const;                                   // метод получения строкового представления схемы с точностью значений precision
+    friend std::ostream& operator<<(std::ostream& os, const Circuit& circuit);          // перегрузка оператора вывода в поток
 };
 //////////////////////////////////////////////////////////////////////////////////////////
 
@@ -60,15 +60,12 @@ inline void Circuit::setElementValue(size_t index, double value)
     elements[index].setValue(value);                                                    // изменяем значение элемента
 }
 
-// метод получения строкового представления схемы
-inline std::string Circuit::toString(size_t precision) const
+// перегрузка оператора вывода в поток
+inline std::ostream& operator<<(std::ostream& os, const Circuit& circuit)
 {
-    return pinMatrix.toString() +
-        nodes.toString() +
-        branches.toString() +
-        incMatrix.toString() +
-        loops.toString() +
-        equations.toString(precision);
+    return os << circuit.pinMatrix << circuit.nodes 
+              << circuit.branches << circuit.incMatrix
+              << circuit.loops << circuit.equations;
 }
 
 // метод обновления схемы

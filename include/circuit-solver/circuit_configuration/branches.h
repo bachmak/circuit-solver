@@ -21,7 +21,7 @@ public:
     const BoolMatr& getBranchesOnPins() const;                                          // геттер матрицы branchesOnPins
     size_t size() const;                                                                // геттер размера списка ветвей branches
     size_t getCurrentSourceCount() const;                                               // геттер счетчика источников тока
-    std::string toString() const;                                                       // метод получения строкового представления списка ветвей branches
+    friend std::ostream& operator<<(std::ostream& os, const Branches& branches);        // перегрузка оператора вывода в поток
 
 private:
     SizeMatr branches;                                                                  // вектор векторов номеров пинов, представляющий список ветвей схемы
@@ -118,28 +118,24 @@ inline size_t Branches::getCurrentSourceCount() const
     return currentSourceCount;
 }
 
-// метод получения строкового представления списка ветвей branches
-inline std::string Branches::toString() const
+// перегрузка оператора вывода в поток
+inline std::ostream& operator<<(std::ostream& os, const Branches& branches)
 {
-    using namespace std;
+    os << "Ветви:\n\n";
 
-    stringstream stream;
-
-    stream << "Ветви:\n\n";
-
-    for (size_t i = 0; i < branches.size(); i++)
+    for (size_t i = 0; i < branches.branches.size(); i++)
     {
-        stream << left << setw(4) << i << right << ": ";
+        os << std::left << std::setw(4) << i << std::right << ": ";
 
-        for (size_t j = 0; j < branches[i].size(); j++)
+        for (size_t j = 0; j < branches.branches[i].size(); j++)
         {
-            stream << setw(4) << branches[i][j] << ' ';
+            os << std::setw(4) << branches.branches[i][j] << ' ';
         }
 
-        stream << "\n\n";
+        os << "\n\n";
     }
 
-    return stream.str();
+    return os;
 }
 
 // метод для сортировки ветвей в векторе branches по наличию источника тока
