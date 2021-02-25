@@ -1,9 +1,27 @@
-#include "../loops.h"
+#pragma once
 
-void Loops::update(const IncMatrix& matrix)
+#include "circuit-solver/common.h"
+#include "circuit-solver/circuit_configuration/inc_matrix.h"
+#include "circuit-solver/structure_units/loop_tree_node.h"
+
+namespace CS
 {
-	mLoops = int_matr_t();																// вектор для хранения контуров (номера ветвей)
-	bool_vect_t branchesInLoops(matrix.getUnknownCurrentCount());						// массив для индикации вхождения ветви в контур (изначально нулевой)
+class Loops
+{
+public:
+	void update(const IncMatrix& matrix);
+	size_t size() const;
+	const IntVect& operator[] (size_t index) const;
+	std::string toString() const;
+
+private:
+	IntMatr loops;
+};
+
+inline void Loops::update(const IncMatrix& matrix)
+{
+    loops.clear();      																// вектор для хранения контуров (номера ветвей)
+	BoolVect branchesInLoops(matrix.getUnknownCurrentCount());						    // массив для индикации вхождения ветви в контур (изначально нулевой)
 
 	for (size_t i = 0; i < matrix.getUnknownCurrentCount(); i++)						// перебор по ветвям (контуры строятся так, чтобы каждая ветвь 
 	{																					// вошла хотя бы в один контур)
@@ -13,25 +31,25 @@ void Loops::update(const IncMatrix& matrix)
 			{																			// инцидентные заданному узлу, то есть смежные с заданной ветвью)
 				if (matrix[i][j])														// если ветвь i инцидентна узлу j, отсюда можно строить дерево
 				{
-					NodeData data = { (int)(i + 1) * matrix[i][j], j };					// (*) создание структуры для хранения в узле: ветвь с номером i + 1, узел с номером j
+					LoopTreeNode::Data data = { (int)(i + 1) * matrix[i][j], j };		// (*) создание структуры для хранения в узле: ветвь с номером i + 1, узел с номером j
 																						// инкремент нужен для того, чтобы отличать направление 0-й ветви по знаку +-
-					Node* node = new Node(data);										// создание узла, от которого будет строиться дерево
+					LoopTreeNode* node = new LoopTreeNode(data);						// создание узла, от которого будет строиться дерево
 					node->createTree(matrix);											// построение дерева от узла node
-					mLoops.push_back({});												// помещение в конец вектора контуров пустого вектора для нового контура
+					loops.push_back({});												// помещение в конец вектора контуров пустого вектора для нового контура
 
-					for (Node* itNode = node->getParent()->getParent();					// ХИТРО: указатель родителя корня node - конечный элемент контура: номера их ветвей
+					for (LoopTreeNode* itNode = node->getParent()->getParent();			// ХИТРО: указатель родителя корня node - конечный элемент контура: номера их ветвей
 						itNode->getData().node != node->getData().node;					// совпадают. Поэтому, чтобы восстановить последовательность ветвей контура, нужно
 						itNode = itNode->getParent())									// сместиться ДВАЖДЫ к родителю от корня, а затем восстановить путь от предпоследнего  
 					{																	// элемента контура до родителя включительно
-						mLoops.back().push_back(itNode->getData().branch * -1);			// добавляем номер ветви, умноженный на -1, в контур
+						loops.back().push_back(itNode->getData().branch * -1);			// добавляем номер ветви, умноженный на -1, в контур
 						branchesInLoops[abs(itNode->getData().branch) - 1] = true;		// делаем отметку о том, что ветвь branch вошла в контур - от неё не нужно строить 
 					}																	// новый контур. Берем по модулю и отнимаем единицу, см. (*)
 					
-					mLoops.back().push_back(node->getData().branch * -1);				// добавляем умноженный на -1 номер ветви корня в контур
+					loops.back().push_back(node->getData().branch * -1);				// добавляем умноженный на -1 номер ветви корня в контур
 
-					if (mLoops.back().size() == 1)										// если контур состоит из одной ветви (в случае узла с тремя ветвями,
+					if (loops.back().size() == 1)										// если контур состоит из одной ветви (в случае узла с тремя ветвями,
 					{																	// две из которых содержат источники тока)
-						mLoops.pop_back();												// извлекаем контур из вектора контуров
+						loops.pop_back();												// извлекаем контур из вектора контуров
 					}
 					else
 					{
@@ -45,17 +63,17 @@ void Loops::update(const IncMatrix& matrix)
 	}
 }
 
-size_t Loops::size() const
+inline size_t Loops::size() const
 {
-	return mLoops.size();
+	return loops.size();
 }
 
-const int_vect_t& Loops::operator[](size_t index) const
+inline const IntVect& Loops::operator[](size_t index) const
 {
-	return mLoops[index];
+	return loops[index];
 }
 
-std::string Loops::toString() const
+inline std::string Loops::toString() const
 {
 	using namespace std;
 
@@ -63,13 +81,13 @@ std::string Loops::toString() const
 
 	stream << "Контуры:\n\n";
 
-	for (size_t i = 0; i < mLoops.size(); i++)
+	for (size_t i = 0; i < loops.size(); i++)
 	{
 		stream << left << setw(4) << i << right << ": ";
 
-		for (size_t j = 0; j < mLoops[i].size(); j++)
+		for (size_t j = 0; j < loops[i].size(); j++)
 		{
-			stream << setw(4) << abs(mLoops[i][j]) - 1 << ' ';
+			stream << setw(4) << abs(loops[i][j]) - 1 << ' ';
 		}
 
 		stream << "\n\n";
@@ -77,3 +95,6 @@ std::string Loops::toString() const
 
 	return stream.str();
 }
+
+} // namespace CS
+
