@@ -1,0 +1,14 @@
+#   type            value       left_linked_pin right_linked_pin 
+
+    resistance      1           none            none
+    voltage_source  2           1               none
+    voltage_source  3           none            3
+    resistance      4           0               4
+    resistance      5           3               none
+    resistance      6           4               none
+    current_source  7           11              9
+    voltage_source  8           none            0
+    voltage_source  9           none            4
+    current_source  10          11              none
+    resistance      11          14              16
+    resistance      12          16              19

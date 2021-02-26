@@ -1,0 +1,7 @@
+#   type    value   left_linked_pin right_linked_pin 
+
+    R       2       none            none
+    R       6       1               none
+    E       2       0               none
+    J       2       5               3
+    R       8       1               5

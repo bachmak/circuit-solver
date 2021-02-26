@@ -8,6 +8,10 @@
 #include "circuit-solver/circuit_configuration/loops.h"
 #include "circuit-solver/equation_system/equations.h"
 
+#include <boost/algorithm/string.hpp>
+#include <sstream>
+#include <stdexcept>
+
 namespace CS
 {
 // класс для представления электрической схемы
@@ -31,6 +35,7 @@ public:
     void update();                                                                      // метод обновления схемы
     void setElementValue(size_t index, double value);                                   // метод изменения значения элемента
     friend std::ostream& operator<<(std::ostream& os, const Circuit& circuit);          // перегрузка оператора вывода в поток
+    friend std::istream& operator>>(std::ostream& is, Circuit& circuit);                // перегрузка оператора ввода из потока
 };
 //////////////////////////////////////////////////////////////////////////////////////////
 
@@ -66,6 +71,89 @@ inline std::ostream& operator<<(std::ostream& os, const Circuit& circuit)
     return os << circuit.pinMatrix << circuit.nodes 
               << circuit.branches << circuit.incMatrix
               << circuit.loops << circuit.equations;
+}
+
+// перегрузка оператора ввода из потока
+inline std::istream& operator>>(std::istream& is, Circuit& circuit)
+{
+    std::string line;
+
+    for (int lineCount = 1; std::getline(is, line); lineCount++)
+    {
+        boost::algorithm::trim(line);
+        boost::algorithm::to_lower(line);
+
+        if (line.empty() || line.front() == '#')
+        {
+            continue;
+        }
+
+        std::istringstream iss(line);
+
+        Element::Type type;
+
+        std::string typeString; 
+        if (!(iss >> typeString))
+        {
+            throw std::runtime_error("Parsing error at line: " + std::to_string(lineCount));
+        }
+
+        if (typeString == "resistance" || typeString == "r")
+        {
+            type = Element::Type::R;
+        }
+        else if (typeString == "current_source" || typeString == "j")
+        {
+            type = Element::Type::J;
+        }
+        else if (typeString == "voltage_source" || typeString == "e")
+        {
+            type = Element::Type::E;
+        }
+        else
+        {
+            throw std::runtime_error("Unknown element type: " + typeString);
+        }
+
+        double value;
+        
+        if (!(iss >> value))
+        {
+            throw std::runtime_error("Parsing error at line: " + std::to_string(lineCount));
+        }
+
+        int linkedPins[2];
+
+        std::string linkedPinString[2];
+
+        for (size_t i = 0; i < 2; i++)
+        {
+            if (!(iss >> linkedPinString[i]))
+            {
+                throw std::runtime_error("Parsing error at line: " + std::to_string(lineCount));
+            }
+
+            if (linkedPinString[i] == "none")
+            {
+                linkedPins[i] = -1;
+            }
+            else
+            {
+                try
+                {
+                    linkedPins[i] = std::stoi(linkedPinString[i]);
+                }
+                catch(const std::exception& e)
+                {
+                    throw std::runtime_error("Parsing error at line: " + std::to_string(lineCount) + "\n" + e.what());
+                }
+            }
+        }
+        
+        circuit.add(Element(type, value, linkedPins[0], linkedPins[1]));
+    }
+    
+    return is;
 }
 
 // метод обновления схемы
