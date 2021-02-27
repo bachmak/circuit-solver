@@ -1,0 +1,54 @@
+#   type        value       left_linked_pin right_linked_pin 
+
+    E           1           none            none
+    R           1           1               none
+    R           2           3               none
+    R           3           5               none
+
+    R           4           none            0
+    E           2           none            1
+    J           1           none            3
+    J           2           none            5
+    E           3           none            7
+
+    R           5           8               10
+    R           6           10              12
+    R           7           12              14
+    R           8           14              16
+
+    E           4           none            8
+    R           9           none            10
+    J           3           12              none
+    J           4           14              none
+    E           5           16              none
+
+#   type        value       left_linked_pin right_linked_pin
+
+    R           10          26              28
+    R           11          28              31
+    R           12          31              33
+    R           13          33              35
+
+    E           6           36              none
+    E           7           38              none
+    E           8           40              none
+    E           9           42              none
+    E           10          43              none
+
+    R           14          45              47
+    R           15          47              49
+    R           16          49              51
+    R           17          51              53
+
+#   type        value       left_linked_pin right_linked_pin
+
+    R           18          45              none
+    R           19          47              none
+    R           20          49              none
+    R           21          51              none
+    R           22          53              none
+
+    E           11          63              65
+    E           12          67              65
+    E           13          67              69
+    E           14          71              69
