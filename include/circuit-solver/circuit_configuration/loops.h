@@ -40,11 +40,11 @@ inline void Loops::update(const IncMatrix& matrix)
                 {
                     LoopTreeNode::Data data = { (int)(i + 1) * matrix[i][j], j };       // (*) создание структуры для хранения в узле: ветвь с номером i + 1, узел с номером j
                                                                                         // инкремент нужен для того, чтобы отличать направление 0-й ветви по знаку +-
-                    LoopTreeNode* node = new LoopTreeNode(data);                        // создание узла, от которого будет строиться дерево
+                    auto node = std::make_shared<LoopTreeNode>(data);                   // создание узла, от которого будет строиться дерево
                     node->createTree(matrix);                                           // построение дерева от узла node
                     loops.push_back({});                                                // помещение в конец вектора контуров пустого вектора для нового контура
 
-                    for (LoopTreeNode* itNode = node->getParent()->getParent();         // ХИТРО: указатель родителя корня node - конечный элемент контура: номера их ветвей
+                    for (auto itNode = node->getParent()->getParent();                  // ХИТРО: указатель родителя корня node - конечный элемент контура: номера их ветвей
                         itNode->getData().node != node->getData().node;                 // совпадают. Поэтому, чтобы восстановить последовательность ветвей контура, нужно
                         itNode = itNode->getParent())                                   // сместиться ДВАЖДЫ к родителю от корня, а затем восстановить путь от предпоследнего  
                     {                                                                   // элемента контура до родителя включительно
