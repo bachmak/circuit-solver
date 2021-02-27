@@ -65,7 +65,7 @@ inline LoopTreeNode::LoopTreeNode(const Pointer node) :
 // метод добавления потомка по хранимым данным
 inline LoopTreeNode::Pointer LoopTreeNode::addChild(const Data data)
 {
-    Pointer child = std::make_shared<LoopTreeNode>(data);                       // создаем потомка по даннмы data
+    Pointer child = std::make_shared<LoopTreeNode>(data);                               // создаем потомка по данным data
     child->parent = shared_from_this();                                                 // родителя потомка инициализируем текущим узлом
     this->children.push_back(child);                                                    // в вектор потомков текущего узла помещаем нового потомка
     return child;                                                                       // возвращаем указатель на потомка
