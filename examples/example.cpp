@@ -11,9 +11,9 @@ int main()
 {
     CS::Circuit simple_circuit, complex_circuit, middle_circuit;
 
-    ifstream ifs_simple("../circuit_simple.txt");
-    ifstream ifs_middle("../circuit_middle.txt");
-    ifstream ifs_complex("../circuit_complex.txt");
+    ifstream ifs_simple("../examples/circuit_simple.txt");
+    ifstream ifs_middle("../examples/circuit_middle.txt");
+    ifstream ifs_complex("../examples/circuit_complex.txt");
 
     ifs_simple >> simple_circuit;
     ifs_middle >> middle_circuit;
